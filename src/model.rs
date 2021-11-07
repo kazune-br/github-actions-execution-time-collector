@@ -10,10 +10,6 @@ pub struct Workflows {
 }
 
 impl Workflows {
-    // pub fn from_value(value: Value) -> Self {
-    //     serde_json::from_value(value).expect("failed to be into struct")
-    // }
-
     pub fn get_workflows(&self) -> Vec<Workflow> {
         self.values.to_vec()
     }
@@ -50,14 +46,6 @@ impl WorkflowRuns {
     pub fn get_workflow_runs(&self) -> Vec<WorkflowRun> {
         self.workflow_runs.to_vec()
     }
-
-    // pub fn collect_ids(&self) -> Vec<i64> {
-    //     self.workflow_runs.iter().map(|wr| wr.get_id()).collect()
-    // }
-
-    // pub fn from_value(value: Value) -> Self {
-    //     serde_json::from_value(value).expect("failed to be into struct")
-    // }
 
     pub fn get_length(&self) -> usize {
         self.workflow_runs.len()
@@ -181,34 +169,6 @@ impl Timings {
         Self { values }
     }
 }
-
-// impl Timings {
-//     pub fn sum_billable_total_ms(&self) -> i64 {
-//         if self.get_length() == 0 {
-//             return 0;
-//         }
-//
-//         return self
-//             .timings
-//             .iter()
-//             .fold(0, |sum, timing| sum + timing.billable_total_ms.unwrap_or(0));
-//     }
-//
-//     pub fn sum_run_duration_ms(&self) -> i64 {
-//         if self.get_length() == 0 {
-//             return 0;
-//         }
-//
-//         return self
-//             .timings
-//             .iter()
-//             .fold(0, |sum, timing| sum + timing.run_duration_ms.unwrap_or(0));
-//     }
-//
-//     pub fn get_length(&self) -> usize {
-//         self.timings.len()
-//     }
-// }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct WorkflowSummary {
