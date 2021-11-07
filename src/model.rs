@@ -6,7 +6,7 @@ use std::fs::File;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Workflows {
-    workflows: Vec<Workflow>,
+    values: Vec<Workflow>,
 }
 
 impl Workflows {
@@ -15,7 +15,7 @@ impl Workflows {
     // }
 
     pub fn get_workflows(&self) -> Vec<Workflow> {
-        self.workflows.to_vec()
+        self.values.to_vec()
     }
 }
 
@@ -173,12 +173,12 @@ impl Timing {
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Timings {
-    timings: Vec<Timing>,
+    values: Vec<Timing>,
 }
 
 impl Timings {
-    pub fn new(timings: Vec<Timing>) -> Self {
-        Self { timings }
+    pub fn new(values: Vec<Timing>) -> Self {
+        Self { values }
     }
 }
 
@@ -212,7 +212,7 @@ impl Timings {
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct WorkflowSummary {
-    reports: Vec<WorkflowRunSummary>,
+    values: Vec<WorkflowRunSummary>,
 }
 
 impl WorkflowSummary {
@@ -224,7 +224,7 @@ impl WorkflowSummary {
     ) -> Self {
         let mut reports: Vec<WorkflowRunSummary> = Vec::new();
         for (t, wr) in timings
-            .timings
+            .values
             .iter()
             .zip(workflow_runs.get_workflow_runs().iter())
         {
@@ -239,7 +239,7 @@ impl WorkflowSummary {
                 run_duration_ms: t.get_run_duration_ms(),
             })
         }
-        Self { reports }
+        Self { values: reports }
     }
 
     pub fn to_csv(&self, name: i64) {
@@ -249,14 +249,14 @@ impl WorkflowSummary {
 
         let file = File::create(format!("{}.csv", name)).expect("failed to create file");
         let mut wtr = csv::Writer::from_writer(file);
-        self.reports
+        self.values
             .iter()
             .for_each(|item| wtr.serialize(item).expect("failed to write"));
         wtr.flush().expect("failed to flush");
     }
 
     pub fn get_length(&self) -> usize {
-        self.reports.len()
+        self.values.len()
     }
 }
 
