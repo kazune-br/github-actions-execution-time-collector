@@ -156,9 +156,9 @@ impl WorkflowRun {
 #[derive(Serialize, SQDeserialize, Debug, Default)]
 pub struct Timing {
     #[query(r#".billable.["UBUNTU"].["total_ms"]"#)]
-    pub(crate) billable_total_ms: Option<i64>,
+    billable_total_ms: Option<i64>,
     #[query(r#".["run_duration_ms"]"#)]
-    pub(crate) run_duration_ms: Option<i64>,
+    run_duration_ms: Option<i64>,
 }
 
 impl Timing {
@@ -173,7 +173,7 @@ impl Timing {
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Timings {
-    pub(crate) timings: Vec<Timing>,
+    timings: Vec<Timing>,
 }
 
 impl Timings {
