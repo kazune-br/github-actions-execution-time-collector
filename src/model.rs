@@ -61,8 +61,8 @@ impl WorkflowRuns {
                 .workflow_runs
                 .clone()
                 .into_iter()
-                .filter(|wr| wr.is_execution_date_equally_greater_than(from_date))
-                .filter(|wr| wr.is_execution_date_equally_smaller_than(to_date))
+                .filter(|wr| wr.is_execution_datetime_equally_newer_than(from_date))
+                .filter(|wr| wr.is_execution_datetime_equally_older_than(to_date))
                 .collect::<Vec<WorkflowRun>>(),
         }
     }
@@ -74,10 +74,10 @@ impl WorkflowRuns {
             .for_each(|wr| self.workflow_runs.push(wr))
     }
 
-    pub fn is_reached_at_from_date(&self, from_date: DateTime<Utc>) -> bool {
+    pub fn is_reached_at_from_datetime(&self, from_dt: DateTime<Utc>) -> bool {
         self.workflow_runs
             .iter()
-            .any(|wr| wr.is_execution_date_smaller_than(from_date))
+            .any(|wr| wr.is_execution_date_older_than(from_dt))
     }
 }
 
@@ -103,41 +103,32 @@ impl WorkflowRun {
 
     /*
         ex:
-        execution_date is 2021/09/4(120) && date_limit is 2021/09/03(110) => false
-        execution_date is 2021/09/3(110) && date_limit is 2021/09/03(110) => false
-        execution_date is 2021/09/2(100) && date_limit is 2021/09/03(110) => true
+        execution_datetime is 2021/09/4 && dt is 2021/09/03 => false
+        execution_datetime is 2021/09/3 && dt is 2021/09/03 => false
+        execution_datetime is 2021/09/2 && dt is 2021/09/03 => true
     */
-    fn is_execution_date_smaller_than(&self, date: DateTime<Utc>) -> bool {
-        DateTime::parse_from_rfc3339(&self.created_at)
-            .expect("failed to parse")
-            .timestamp()
-            < date.timestamp()
+    fn is_execution_date_older_than(&self, date: DateTime<Utc>) -> bool {
+        DateTime::parse_from_rfc3339(&self.created_at).expect("failed to parse") < date
     }
 
     /*
         ex:
-        execution_date is 2021/09/4(120) && date_limit is 2021/09/03(110) => false
-        execution_date is 2021/09/3(110) && date_limit is 2021/09/03(110) => true
-        execution_date is 2021/09/2(100) && date_limit is 2021/09/03(110) => true
+        execution_datetime is 2021/09/4 && to_dt is 2021/09/03 => false
+        execution_datetime is 2021/09/3 && to_dt is 2021/09/03 => true
+        execution_datetime is 2021/09/2 && to_dt is 2021/09/03 => true
     */
-    fn is_execution_date_equally_smaller_than(&self, date: DateTime<Utc>) -> bool {
-        DateTime::parse_from_rfc3339(&self.created_at)
-            .expect("failed to parse")
-            .timestamp()
-            <= date.timestamp()
+    fn is_execution_datetime_equally_older_than(&self, to_dt: DateTime<Utc>) -> bool {
+        DateTime::parse_from_rfc3339(&self.created_at).expect("failed to parse") <= to_dt
     }
 
     /*
         ex:
-        execution_date is 2021/09/4(120) && date_limit is 2021/09/03(110) => true
-        execution_date is 2021/09/3(110) && date_limit is 2021/09/03(110) => true
-        execution_date is 2021/09/2(100) && date_limit is 2021/09/03(110) => false
+        execution_datetime is 2021/09/4 && from_dt is 2021/09/03 => true
+        execution_datetime is 2021/09/3 && from_dt is 2021/09/03 => true
+        execution_datetime is 2021/09/2 && from_dt is 2021/09/03 => false
     */
-    fn is_execution_date_equally_greater_than(&self, date: DateTime<Utc>) -> bool {
-        DateTime::parse_from_rfc3339(&self.created_at)
-            .expect("failed to parse")
-            .timestamp()
-            >= date.timestamp()
+    fn is_execution_datetime_equally_newer_than(&self, from_dt: DateTime<Utc>) -> bool {
+        DateTime::parse_from_rfc3339(&self.created_at).expect("failed to parse") >= from_dt
     }
 }
 

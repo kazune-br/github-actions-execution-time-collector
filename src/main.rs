@@ -18,7 +18,7 @@ use tokio::sync::mpsc;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let (owner_name, repository_name, from_date, to_date) = Cli::new().extract_args();
+    let (owner_name, repository_name, from_dt, to_dt) = Cli::new().extract_args();
     let token = env::var("GITHUB_TOKEN")?;
     let client = new_api_client(token)?;
     let gateway = Arc::new(GithubGateway::new(
@@ -33,11 +33,9 @@ async fn main() -> Result<()> {
         .into_iter()
         .map(|w| {
             let gateway = gateway.clone();
-            tokio::spawn(async move {
-                gateway
-                    .find_workflow_runs(w.get_id(), from_date, to_date)
-                    .await
-            })
+            tokio::spawn(
+                async move { gateway.find_workflow_runs(w.get_id(), from_dt, to_dt).await },
+            )
         })
         .collect::<Vec<_>>();
     let workflow_runs_lst = try_join_all(workflow_runs_tasks)

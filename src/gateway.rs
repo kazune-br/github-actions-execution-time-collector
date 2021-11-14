@@ -44,8 +44,8 @@ impl IGithubRepository for GithubGateway {
     async fn find_workflow_runs(
         &self,
         workflow_id: i64,
-        from_date: DateTime<Utc>,
-        to_date: DateTime<Utc>,
+        from_dt: DateTime<Utc>,
+        to_dt: DateTime<Utc>,
     ) -> Result<WorkflowRuns> {
         let max_count = self.find_workflow_runs_max_page_counts(workflow_id).await?;
         let mut workflow_runs = WorkflowRuns::empty();
@@ -62,8 +62,8 @@ impl IGithubRepository for GithubGateway {
                 .await?
                 .json::<WorkflowRuns>()
                 .await?;
-            let reached = runs.is_reached_at_from_date(from_date);
-            runs = runs.exclude_runs_exceeding_date_limit(from_date, to_date);
+            let reached = runs.is_reached_at_from_datetime(from_dt);
+            runs = runs.exclude_runs_exceeding_date_limit(from_dt, to_dt);
             workflow_runs.add_workflow_runs(runs);
 
             if reached {
