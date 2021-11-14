@@ -6,12 +6,12 @@ use std::fs::File;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Workflows {
-    values: Vec<Workflow>,
+    workflows: Vec<Workflow>,
 }
 
 impl Workflows {
     pub fn get_workflows(&self) -> Vec<Workflow> {
-        self.values.to_vec()
+        self.workflows.to_vec()
     }
 }
 
@@ -171,12 +171,12 @@ impl Timing {
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Timings {
-    values: Vec<Timing>,
+    timings: Vec<Timing>,
 }
 
 impl Timings {
     pub fn new(values: Vec<Timing>) -> Self {
-        Self { values }
+        Self { timings: values }
     }
 }
 
@@ -194,7 +194,7 @@ impl WorkflowSummary {
     ) -> Self {
         let mut reports: Vec<WorkflowRunSummary> = Vec::new();
         for (t, wr) in timings
-            .values
+            .timings
             .iter()
             .zip(workflow_runs.get_workflow_runs().iter())
         {
