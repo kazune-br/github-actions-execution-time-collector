@@ -1,7 +1,7 @@
 use chrono::prelude::*;
 use chrono::DateTime;
 use serde::{Deserialize, Serialize};
-use serde_query::Deserialize as SQDeserialize;
+use serde_json::Value;
 use std::fs::File;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
@@ -141,15 +141,25 @@ impl WorkflowRun {
     }
 }
 
-#[derive(Serialize, SQDeserialize, Debug, Default)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Timing {
-    #[query(r#".billable.["UBUNTU"].["total_ms"]"#)]
     billable_total_ms: Option<i64>,
-    #[query(r#".["run_duration_ms"]"#)]
     run_duration_ms: Option<i64>,
 }
 
 impl Timing {
+    pub fn from_value(value: Value) -> Self {
+        Self {
+            billable_total_ms: value
+                .pointer("/billable/UBUNTU/total_ms")
+                .map_or_else(|| Some(0), |v| v.as_i64()),
+            run_duration_ms: value
+                .pointer("/run_duration_ms")
+                .expect("failed to get billable")
+                .as_i64(),
+        }
+    }
+
     pub fn get_billable_total_ms(&self) -> Option<i64> {
         self.billable_total_ms
     }

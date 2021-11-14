@@ -5,6 +5,7 @@ use anyhow::Result;
 use async_trait::async_trait;
 use chrono::prelude::*;
 use reqwest::Client;
+use serde_json::Value;
 
 use regex::Regex;
 
@@ -95,13 +96,9 @@ impl IGithubRepository for GithubGateway {
             "https://api.github.com/repos/{}/{}/actions/runs/{}/timing",
             self.owner_name, self.repository_name, run_id
         );
-        Ok(self
-            .client
-            .get(endpoint)
-            .send()
-            .await?
-            .json::<Timing>()
-            .await?)
+        let json_string = self.client.get(endpoint).send().await?.text().await?;
+        let value: Value = serde_json::from_str(&json_string)?;
+        Ok(Timing::from_value(value))
     }
 }
 
