@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  BIN_NAME: github-actions-execution-time-collector
+
+jobs:
+  create_release:
+    name: Create release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      latest_tag_version: ${{ steps.latest_tag_version.outputs.latest_tag_version }}
+    steps:
+      - name: Get Latest Tag Version
+        id: latest_tag_version
+        run: |
+          TAG_VERSION=$(echo ${{ github.ref }} | sed -e "s#refs/tags/##g")
+          echo ::set-output name=latest_tag_version::${TAG_VERSION}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        with:
+          tag_name: ${{ steps.latest_tag_version.outputs.latest_tag_version }}
+          release_name: ${{ steps.latest_tag_version.outputs.latest_tag_version }}
+          draft: false
+          prerelease: false
+
+  release_binary:
+    name: Release binary
+    needs: create_release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-musl
+          - x86_64-unknown-linux-gnu
+          - x86_64-apple-darwin
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            artifact_suffix: x86_64-musl
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            artifact_suffix: x86_64-gnu
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            artifact_suffix: x86_64-mac
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Build
+        if : matrix.target != 'x86_64-unknown-linux-musl'
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --target=${{ matrix.target }}
+
+      - name: Build for linux-musl
+        if : matrix.target == 'x86_64-unknown-linux-musl'
+        run: |
+          docker build -t builder:latest .
+          docker run --name builder -d builder:latest tail -f /dev/null
+          docker cp builder:/target ./
+
+      - name: Zip Binary
+        run:
+          zip -j ${{ env.BIN_NAME }}-${{ needs.create_release.outputs.latest_tag_version }}-${{ matrix.artifact_suffix }}.zip target/${{ matrix.target }}/release/${{ env.BIN_NAME }}
+
+      - name: Upload Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ${{ env.BIN_NAME }}-${{ needs.create_release.outputs.latest_tag_version }}-${{ matrix.artifact_suffix }}.zip
+          asset_name: ${{ env.BIN_NAME }}-${{ needs.create_release.outputs.latest_tag_version }}-${{ matrix.artifact_suffix }}.zip
+          asset_content_type: application/zip

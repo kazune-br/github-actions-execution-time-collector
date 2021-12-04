@@ -6,15 +6,15 @@ fmt:
 lint:
 	cargo +nightly clippy -- -A clippy::print_literal
 
-build: fmt lint
+build: # fmt lint
 	cargo build
 
 run: # build
 	./target/release/github-actions-execution-time-collector \
 		--o "kazune-br" \
 		--r "github-actions-execution-time-collector" \
-		--from "2021-11-6" \
-		--to "2021-11-7"
+		--from "2021-12-1" \
+		--to "2021-12-10"
 
 lint-for-production:
 	cargo clippy -- -D warnings
