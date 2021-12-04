@@ -9,8 +9,8 @@ lint:
 build: fmt lint
 	cargo build
 
-run: build
-	./target/debug/github-actions-execution-time-collector \
+run: # build
+	./target/release/github-actions-execution-time-collector \
 		--o "kazune-br" \
 		--r "github-actions-execution-time-collector" \
 		--from "2021-11-6" \

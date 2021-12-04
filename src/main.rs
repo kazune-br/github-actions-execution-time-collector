@@ -19,7 +19,7 @@ use tokio::sync::mpsc;
 #[tokio::main]
 async fn main() -> Result<()> {
     let (owner_name, repository_name, from_dt, to_dt) = Cli::new().extract_args();
-    let token = env::var("GITHUB_TOKEN")?;
+    let token = env::var("GITHUB_TOKEN").expect("require GITHUB_TOKEN as environment variable");
     let client = new_api_client(token)?;
     let gateway = Arc::new(GithubGateway::new(
         client,
