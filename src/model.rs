@@ -134,15 +134,23 @@ impl WorkflowRun {
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Timing {
-    billable_total_ms: Option<i64>,
+    billable_ubuntu_total_ms: Option<i64>,
+    billable_macos_total_ms: Option<i64>,
+    billable_windows_total_ms: Option<i64>,
     run_duration_ms: Option<i64>,
 }
 
 impl Timing {
     pub fn from_value(value: Value) -> Self {
         Self {
-            billable_total_ms: value
+            billable_ubuntu_total_ms: value
                 .pointer("/billable/UBUNTU/total_ms")
+                .map_or_else(|| Some(0), |v| v.as_i64()),
+            billable_macos_total_ms: value
+                .pointer("/billable/MACOS/total_ms")
+                .map_or_else(|| Some(0), |v| v.as_i64()),
+            billable_windows_total_ms: value
+                .pointer("/billable/WINDOWS/total_ms")
                 .map_or_else(|| Some(0), |v| v.as_i64()),
             run_duration_ms: value
                 .pointer("/run_duration_ms")
@@ -150,8 +158,16 @@ impl Timing {
         }
     }
 
-    pub fn get_billable_total_ms(&self) -> Option<i64> {
-        self.billable_total_ms
+    pub fn get_billable_ubuntu_total_ms(&self) -> Option<i64> {
+        self.billable_ubuntu_total_ms
+    }
+
+    pub fn get_billable_macos_total_ms(&self) -> Option<i64> {
+        self.billable_macos_total_ms
+    }
+
+    pub fn get_billable_windows_total_ms(&self) -> Option<i64> {
+        self.billable_windows_total_ms
     }
 
     pub fn get_run_duration_ms(&self) -> Option<i64> {
@@ -195,7 +211,9 @@ impl WorkflowSummary {
                 workflow_run_id: wr.get_id(),
                 workflow_run_created_at: wr.get_created_at(),
                 workflow_run_status: wr.get_status(),
-                billable_total_ms: t.get_billable_total_ms(),
+                billable_ubuntu_total_ms: t.get_billable_ubuntu_total_ms(),
+                billable_macos_total_ms: t.get_billable_macos_total_ms(),
+                billable_windows_total_ms: t.get_billable_windows_total_ms(),
                 run_duration_ms: t.get_run_duration_ms(),
             })
         }
@@ -228,6 +246,8 @@ pub struct WorkflowRunSummary {
     workflow_run_id: i64,
     workflow_run_created_at: String,
     workflow_run_status: String,
-    billable_total_ms: Option<i64>,
+    billable_ubuntu_total_ms: Option<i64>,
+    billable_macos_total_ms: Option<i64>,
+    billable_windows_total_ms: Option<i64>,
     run_duration_ms: Option<i64>,
 }
