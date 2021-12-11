@@ -183,13 +183,13 @@ impl WorkflowSummary {
         workflow_runs: WorkflowRuns,
         timings: Timings,
     ) -> Self {
-        let mut reports: Vec<WorkflowRunSummary> = Vec::new();
+        let mut summaries: Vec<WorkflowRunSummary> = Vec::new();
         for (t, wr) in timings
             .timings
             .iter()
             .zip(workflow_runs.get_workflow_runs().iter())
         {
-            reports.push(WorkflowRunSummary {
+            summaries.push(WorkflowRunSummary {
                 repository_name: repository_name.clone(),
                 workflow_id: workflow.get_id(),
                 workflow_name: workflow.get_name(),
@@ -200,7 +200,7 @@ impl WorkflowSummary {
                 run_duration_ms: t.get_run_duration_ms(),
             })
         }
-        Self { values: reports }
+        Self { values: summaries }
     }
 
     pub fn to_csv(&self, name: i64) {
