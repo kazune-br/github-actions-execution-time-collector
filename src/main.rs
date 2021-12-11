@@ -27,11 +27,13 @@ async fn main() -> Result<()> {
         repository_name.clone(),
     ));
 
+    println!("starting to search workflows🚀");
     let workflows = gateway.find_workflows().await?;
     let workflow_runs_tasks = workflows
         .get_workflows()
         .into_iter()
         .map(|w| {
+            println!("\tfound '{}'", w.get_name());
             let gateway = gateway.clone();
             tokio::spawn(
                 async move { gateway.find_workflow_runs(w.get_id(), from_dt, to_dt).await },
@@ -43,6 +45,7 @@ async fn main() -> Result<()> {
         .into_iter()
         .collect::<Result<Vec<WorkflowRuns>>>()?;
 
+    println!("starting to collect workflow_runs🚀");
     let (tx, mut rx) = mpsc::channel(1);
     tokio::spawn(async move {
         for (wr, w) in workflow_runs_lst
