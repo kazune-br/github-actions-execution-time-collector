@@ -10,7 +10,7 @@ pub struct Cli {
 impl Cli {
     pub fn new() -> Self {
         Self {
-            matches: ClapApp::new("gadc")
+            matches: ClapApp::new("github-actions-execution-time-collector")
                 .arg(Arg::new("owner_name").long("o").takes_value(true))
                 .arg(Arg::new("repository_name").long("r").takes_value(true))
                 .arg(Arg::new("from_date").long("from").takes_value(true))
