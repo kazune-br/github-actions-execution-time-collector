@@ -146,8 +146,7 @@ impl Timing {
                 .map_or_else(|| Some(0), |v| v.as_i64()),
             run_duration_ms: value
                 .pointer("/run_duration_ms")
-                .expect("failed to get billable")
-                .as_i64(),
+                .map_or_else(|| Some(0), |v| v.as_i64()),
         }
     }
 
