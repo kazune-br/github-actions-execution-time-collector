@@ -1,30 +1,36 @@
 .PHONY: fmt lint build lint-for-production test
 
+test:
+	cargo test
+
 fmt:
 	cargo fmt
 
 lint:
-	cargo +nightly clippy -- -A clippy::print_literal
-
-build: # fmt lint
-	cargo build
-
-run: # build
-	./target/release/github-actions-execution-time-collector \
-		--o "kazune-br" \
-		--r "github-actions-execution-time-collector" \
-		--from "2021-12-1" \
-		--to "2021-12-10"
+	cargo clippy -- -A clippy::print_literal
 
 lint-for-production:
 	cargo clippy -- -D warnings
 
-fix:
-	cargo fix
-	cargo +nightly clippy --fix -Z unstable-options
+build: fmt lint
+	cargo build
 
-test:
-	cargo test
+run-debug: build
+	./target/debug/github-actions-execution-time-collector \
+		--o "kazune-br" \
+		--r "github-actions-execution-time-collector" \
+		--from "2021-12-1" \
+		--to "2021-12-12"
 
-release: fmt lint test build
+release: fmt lint-for-production test
 	cargo build --release
+
+run: release
+	./target/release/github-actions-execution-time-collector \
+		--o "kazune-br" \
+		--r "github-actions-execution-time-collector" \
+		--from "2021-12-1" \
+		--to "2021-12-11"
+
+switch-tool-chain:
+	rustup default $$(printf "stable\nnightly" | fzf)
