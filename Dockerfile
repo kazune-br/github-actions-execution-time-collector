@@ -4,9 +4,8 @@ RUN apt-get update && apt-get upgrade && apt-get install musl-tools pkg-config l
 
 RUN rustup target add x86_64-unknown-linux-musl
 
-RUN export OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu/
-
-RUN export OPENSSL_INCLUDE_DIR=/usr/include/openssl
+ENV OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu/ \
+    OPENSSL_INCLUDE_DIR=/usr/include/openssl
 
 COPY . .
 
