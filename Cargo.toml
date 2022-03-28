@@ -7,7 +7,7 @@ edition = "2018"
 
 [dependencies]
 anyhow = "1.0.56"
-async-trait = "0.1.51"
+async-trait = "0.1.53"
 chrono = "0.4.19"
 clap = { version = "3.1.6", features = ["yaml"] }
 csv = "1.1.6"
