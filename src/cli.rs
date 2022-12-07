@@ -53,8 +53,7 @@ impl Cli {
                     .expect("failed to parse from str to int, but must be parsed")
             })
             .collect::<Vec<u32>>();
-        Utc.ymd(date_parsed[0] as i32, date_parsed[1], date_parsed[2])
-            .and_hms(0, 0, 0)
+        Utc.with_ymd_and_hms(date_parsed[0] as i32, date_parsed[1], date_parsed[2], 0, 0, 0).unwrap()
     }
 }
 
