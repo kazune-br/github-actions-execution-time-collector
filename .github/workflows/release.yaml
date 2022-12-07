@@ -65,10 +65,18 @@ jobs:
           override: true
 
       - name: Build
+        if : matrix.target != 'x86_64-unknown-linux-musl'
         uses: actions-rs/cargo@v1
         with:
           command: build
           args: --release --target=${{ matrix.target }}
+
+      - name: Build for linux-musl
+        if : matrix.target == 'x86_64-unknown-linux-musl'
+        run: |
+          docker build -t builder:latest .
+          docker run --name builder -d builder:latest tail -f /dev/null
+          docker cp builder:/target ./
 
       - name: Zip Binary
         run:
