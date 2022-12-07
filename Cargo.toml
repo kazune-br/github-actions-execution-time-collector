@@ -6,16 +6,16 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.57"
-async-trait = "0.1.53"
-chrono = "0.4.19"
-clap = { version = "3.1.18", features = ["yaml"] }
+anyhow = "1.0.66"
+async-trait = "0.1.59"
+chrono = "0.4.23"
+clap = "4.0.29"
 csv = "1.1.6"
-futures = "0.3"
-indicatif = { version = "0.16.2", features = ["rayon"] }
-regex = "1.5.6"
-reqwest = { version = "0.11.10", features = ["blocking", "json", "rustls"] }
-serde = { version = "1.0.136", features = ["derive"] }
-serde_json = { version = "1.0.81", default-features = false, features = ["alloc"] }
-tokio = { version = "1", features = ["full"] }
-openssl = { version = "0.10", features = ["vendored"] }
+futures = "0.3.25"
+indicatif = { version = "0.17.2", features = ["rayon"] }
+regex = "1.7.0"
+reqwest = { version = "0.11.13", features = ["blocking", "json", "rustls"] }
+serde = { version = "1.0.149", features = ["derive"] }
+serde_json = { version = "1.0.89", default-features = false, features = ["alloc"] }
+tokio = { version = "1.23.0", features = ["full"] }
+openssl = { version = "0.10.44", features = ["vendored"] }

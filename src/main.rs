@@ -74,7 +74,7 @@ async fn collect_summary(
     workflow: Workflow,
     workflow_runs: WorkflowRuns,
 ) -> WorkflowSummary {
-    let pb = new_progress_bar(workflow_runs.get_length() as u64, workflow.get_name());
+    let pb = new_progress_bar(workflow_runs.get_length() as u64, workflow.get_name()).unwrap();
 
     let (tx, mut rx) = mpsc::channel(1);
     for run in workflow_runs.get_workflow_runs().into_iter() {
