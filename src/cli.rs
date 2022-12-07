@@ -1,6 +1,6 @@
 use anyhow::Result;
 use chrono::prelude::*;
-use clap::{Arg, ArgAction, ArgMatches, Command};
+use clap::{Arg, ArgMatches, Command};
 use indicatif::{ProgressBar, ProgressStyle};
 
 #[derive(Default, Debug)]
@@ -53,7 +53,15 @@ impl Cli {
                     .expect("failed to parse from str to int, but must be parsed")
             })
             .collect::<Vec<u32>>();
-        Utc.with_ymd_and_hms(date_parsed[0] as i32, date_parsed[1], date_parsed[2], 0, 0, 0).unwrap()
+        Utc.with_ymd_and_hms(
+            date_parsed[0] as i32,
+            date_parsed[1],
+            date_parsed[2],
+            0,
+            0,
+            0,
+        )
+        .unwrap()
     }
 }
 
