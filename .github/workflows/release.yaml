@@ -55,7 +55,7 @@ jobs:
             artifact_suffix: x86_64-mac
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Setup Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
