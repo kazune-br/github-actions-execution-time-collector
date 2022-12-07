@@ -1,5 +1,6 @@
+use anyhow::Result;
 use chrono::prelude::*;
-use clap::{App as ClapApp, Arg, ArgMatches};
+use clap::{Arg, ArgAction, ArgMatches, Command};
 use indicatif::{ProgressBar, ProgressStyle};
 
 #[derive(Default, Debug)]
@@ -10,24 +11,25 @@ pub struct Cli {
 impl Cli {
     pub fn new() -> Self {
         Self {
-            matches: ClapApp::new("github-actions-execution-time-collector")
-                .arg(Arg::new("owner_name").long("o").takes_value(true))
-                .arg(Arg::new("repository_name").long("r").takes_value(true))
-                .arg(Arg::new("from_date").long("from").takes_value(true))
-                .arg(Arg::new("to_date").long("to").takes_value(true))
+            matches: Command::new("github-actions-execution-time-collector")
+                .arg(Arg::new("owner_name").long("o"))
+                .arg(Arg::new("repository_name").long("r"))
+                .arg(Arg::new("from_date").long("from"))
+                .arg(Arg::new("to_date").long("to"))
                 .get_matches(),
         }
     }
 
     pub fn extract_args(&self) -> (String, String, DateTime<Utc>, DateTime<Utc>) {
+        println!("hello");
         let owner_name = self
             .matches
-            .value_of("owner_name")
-            .expect("owner_name is not given");
+            .get_one::<String>("owner_name")
+            .expect("owner_name must be given");
         let repository_name = self
             .matches
-            .value_of("repository_name")
-            .expect("repository_name is not given");
+            .get_one::<String>("repository_name")
+            .expect("repository_name must be given");
         let from_date = self.convert_into_datetime("from_date");
         let to_date = self.convert_into_datetime("to_date");
         (
@@ -41,8 +43,8 @@ impl Cli {
     fn convert_into_datetime(&self, arg_name: &str) -> DateTime<Utc> {
         let date_parsed = self
             .matches
-            .value_of(arg_name)
-            .expect("from_date is not given")
+            .get_one::<String>(arg_name)
+            .expect("from_date must be given")
             .split('-')
             .collect::<Vec<&str>>()
             .into_iter()
@@ -56,13 +58,13 @@ impl Cli {
     }
 }
 
-pub fn new_progress_bar(bar_length: u64, bar_name: String) -> ProgressBar {
+pub fn new_progress_bar(bar_length: u64, bar_name: String) -> Result<ProgressBar> {
     let pb = ProgressBar::new(bar_length);
     pb.set_style(
         ProgressStyle::default_bar()
-            .template("{prefix:>12.cyan.bold} [{bar:57}] {pos}/{len} {wide_msg}")
+            .template("{prefix:>12.cyan.bold} [{bar:57}] {pos}/{len} {wide_msg}")?
             .progress_chars("=> "),
     );
     pb.set_prefix(bar_name);
-    pb
+    Ok(pb)
 }
