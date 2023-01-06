@@ -17,5 +17,5 @@ regex = "1.7.0"
 reqwest = { version = "0.11.13", features = ["blocking", "json", "rustls"] }
 serde = { version = "1.0.149", features = ["derive"] }
 serde_json = { version = "1.0.89", default-features = false, features = ["alloc"] }
-tokio = { version = "1.23.0", features = ["full"] }
+tokio = { version = "1.24.0", features = ["full"] }
 openssl = { version = "0.10.44", features = ["vendored"] }
