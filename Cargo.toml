@@ -7,7 +7,7 @@ edition = "2018"
 
 [dependencies]
 anyhow = "1.0.66"
-async-trait = "0.1.59"
+async-trait = "0.1.66"
 chrono = "0.4.23"
 clap = "4.0.29"
 csv = "1.1.6"
